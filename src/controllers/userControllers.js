@@ -1,43 +1,39 @@
-/*const movies = [
-    {
-      id: 1,
-      title: "Citizen Kane",
-      director: "Orson Wells",
-      year: "1941",
-      color: false,
-      duration: 120,
-    },
-    {
-      id: 2,
-      title: "The Godfather",
-      director: "Francis Ford Coppola",
-      year: "1972",
-      color: true,
-      duration: 180,
-    },
-    {
-      id: 3,
-      title: "Pulp Fiction",
-      director: "Quentin Tarantino",
-      year: "1994",
-      color: true,
-      duration: 180,
-    },
-  ];*/
-  
   const database = require("../../database");
   
   const getUsers = (req, res) => {
+    let sql = "select * from users";
+    const sqlValues = [];
+
+    if (req.query.language != null) {
+      sql += " where language = ?";
+      sqlValues.push(req.query.language);
+    
+      if (req.query.city != null) {
+        sql += " and city = ?";
+        sqlValues.push(req.query.city);
+      }
+    } else if (req.query.city != null) {
+      sql += " where city = ?";
+      sqlValues.push(req.query.city);
+    }
+
+  console.log(sql);
+  console.log(sqlValues);
+  
     database
-      .query("select * from users")
-      .then(([users]) => {
-        res.status(200).json(users); 
+      .query(sql, sqlValues)
+      .then(([users
+        
+      ]) => {
+        res.json(users);
       })
       .catch((err) => {
         console.error(err);
-        res.sendStatus(500);
+        res.status(500).send("Error retrieving data from database");
       });
+  
   };
+
   
   const getUserById = (req, res) => {
     const id = parseInt(req.params.id);
